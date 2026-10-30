@@ -1,4 +1,4 @@
-// This package provides a WebSocket client for the Ethereal exchange API.
+// This package provides a WebSocket client for the Meridian (formerly Ethereal) exchange API.
 // It supports real-time streaming of market data and account events using Protocol Buffers.
 package ethereal
 
@@ -16,6 +16,7 @@ import (
 
 type Environment string
 
+// TODO(meridian): switch to the meridian.xyz stream hosts once they are published.
 const (
 	// Testnet is the WebSocket URL for the testnet environment.
 	Testnet Environment = "wss://ws2.etherealtest.net/v1/stream"

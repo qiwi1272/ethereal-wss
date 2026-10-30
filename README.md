@@ -1,8 +1,12 @@
-# Golang Websocket Client for Ethereal API
+# Golang Websocket Client for Meridian API
 
 [![Go Reference](https://pkg.go.dev/badge/github.com/roundinternetmoney/ethereal-wss/v2.svg)](https://pkg.go.dev/github.com/roundinternetmoney/ethereal-wss/v2)
 [![Go Report Card](https://goreportcard.com/badge/github.com/roundinternetmoney/ethereal-wss/v2)](https://goreportcard.com/report/github.com/roundinternetmoney/ethereal-wss/v2)
 [![CI](https://github.com/roundinternetmoney/ethereal-wss/actions/workflows/ci.yml/badge.svg)](https://github.com/roundinternetmoney/ethereal-wss/actions/workflows/ci.yml)
+
+A proto-based websocket client for the [Meridian](https://meridian.xyz) exchange (formerly Ethereal).
+
+> **Rebrand in progress:** Ethereal is now Meridian. The module path, package name, protobuf types and stream hosts still use the old `ethereal` names for now. See [REBRAND.md](./REBRAND.md) for what is left.
 
 ## Features
 - Protobuf support.
