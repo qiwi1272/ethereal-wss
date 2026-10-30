@@ -16,12 +16,18 @@ import (
 
 type Environment string
 
-// TODO(meridian): switch to the Meridian stream hosts from https://docs.meridian.xyz (Perpetuals API).
+// Meridian stream hosts, see https://docs.meridian.xyz/protocol-reference/api-hosts.
 const (
 	// Testnet is the WebSocket URL for the testnet environment.
-	Testnet Environment = "wss://ws2.etherealtest.net/v1/stream"
+	Testnet Environment = "wss://ws.meridiantest.net/v1/stream"
 	// Mainnet is the WebSocket URL for the mainnet environment.
-	Mainnet Environment = "wss://ws2.ethereal.trade/v1/stream"
+	Mainnet Environment = "wss://ws.meridian.xyz/v1/stream"
+
+	// Deprecated: legacy Ethereal stream host. Meridian is a separate
+	// deployment; Ethereal subaccount IDs do not carry over.
+	EtherealTestnet Environment = "wss://ws2.etherealtest.net/v1/stream"
+	// Deprecated: see EtherealTestnet.
+	EtherealMainnet Environment = "wss://ws2.ethereal.trade/v1/stream"
 )
 
 type Client struct {

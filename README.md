@@ -6,7 +6,7 @@
 
 A proto-based websocket client for the [Meridian](https://meridian.xyz) exchange (formerly Ethereal).
 
-> **Rebrand in progress:** Ethereal is now Meridian. The module path, package name, protobuf types and stream hosts still use the old `ethereal` names for now. See [REBRAND.md](./REBRAND.md) for what is left.
+> **Rebrand in progress:** Ethereal is now Meridian, and `Testnet` / `Mainnet` now point at the Meridian stream hosts. The module path, package name and protobuf types still use the old `ethereal` names for now. See [REBRAND.md](./REBRAND.md) for what is left.
 
 ## Features
 - Protobuf support.
