@@ -13,8 +13,10 @@ things for current users.
 
 - [ ] **Stream hosts.** `Testnet` / `Mainnet` in `client.go` still point to
       `ws2.etherealtest.net` / `ws2.ethereal.trade` (marked `TODO(meridian)`).
-      Swap them once Meridian publishes its hosts, and update `TestEnvironment`
-      in `ethereal_test.go` to match.
+      Swap them for the hosts in the Perpetuals API section of
+      https://docs.meridian.xyz, and update `TestEnvironment` in
+      `ethereal_test.go` to match. Also check that the Market Data docs still use
+      the same subscribe format and event names.
 
 ## Blocked: upstream protos (`roundinternet.money/protos`)
 

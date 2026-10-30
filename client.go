@@ -16,7 +16,7 @@ import (
 
 type Environment string
 
-// TODO(meridian): switch to the meridian.xyz stream hosts once they are published.
+// TODO(meridian): switch to the Meridian stream hosts from https://docs.meridian.xyz (Perpetuals API).
 const (
 	// Testnet is the WebSocket URL for the testnet environment.
 	Testnet Environment = "wss://ws2.etherealtest.net/v1/stream"
