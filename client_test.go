@@ -390,6 +390,62 @@ func TestListen_WebsocketStatus_okFalse_ReturnsError(t *testing.T) {
 	}
 }
 
+func TestListen_SubscribeAck_okFalse_ReturnsError(t *testing.T) {
+	clientConn, serverConn, cleanup := wsTestPair(t)
+	defer cleanup()
+
+	c := newTestClient(clientConn)
+	// Wire format the gateway sends for a rejected subscribe.
+	payload := []byte(`{"ok":false,"code":"UNKNOWN_PRODUCT"}`)
+
+	ctx := context.Background()
+	errCh := make(chan error, 1)
+	go func() { errCh <- c.Listen(ctx) }()
+
+	if err := serverConn.Write(ctx, websocket.MessageText, payload); err != nil {
+		t.Fatalf("server write: %v", err)
+	}
+	select {
+	case err := <-errCh:
+		if err == nil || !strings.Contains(err.Error(), "UNKNOWN_PRODUCT") {
+			t.Fatalf("expected UNKNOWN_PRODUCT error, got %v", err)
+		}
+	case <-time.After(10 * time.Second):
+		t.Fatal("Listen did not return after a rejected subscribe")
+	}
+}
+
+func TestListen_SubscribeAck_okTrue_Continues(t *testing.T) {
+	clientConn, serverConn, cleanup := wsTestPair(t)
+	defer cleanup()
+
+	c := newTestClient(clientConn)
+	var hits atomic.Int32
+	c.OnL2Book(func(b *etherealv1.L2Book) { hits.Add(1) })
+
+	l2 := mustProtoJSON(t, &etherealv1.L2Book{
+		E:    etherealv1.EventType_json_name[EventTypeL2Book],
+		T:    1,
+		Data: &etherealv1.L2Book_Data{S: "x", T: 1},
+	})
+
+	ctx, cancel := context.WithCancel(context.Background())
+	errCh := make(chan error, 1)
+	go func() { errCh <- c.Listen(ctx) }()
+
+	if err := serverConn.Write(ctx, websocket.MessageText, []byte(`{"ok":true}`)); err != nil {
+		t.Fatalf("server write ack: %v", err)
+	}
+	if err := serverConn.Write(ctx, websocket.MessageText, l2); err != nil {
+		t.Fatalf("server write l2: %v", err)
+	}
+	waitFor(t, func() bool { return hits.Load() >= 1 }, 2*time.Second, "L2Book after ack")
+	cancel()
+	if err := <-errCh; err == nil {
+		t.Fatal("expected context error after cancel")
+	}
+}
+
 func TestListen_WebsocketStatus_okTrue_Continues(t *testing.T) {
 	clientConn, serverConn, cleanup := wsTestPair(t)
 	defer cleanup()

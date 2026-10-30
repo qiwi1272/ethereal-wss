@@ -11,6 +11,7 @@ import (
 
 	"github.com/coder/websocket"
 	"google.golang.org/protobuf/encoding/protojson"
+	statusv1 "roundinternet.money/protos/gen/dex/base/status/v1"
 	etherealv1 "roundinternet.money/protos/gen/dex/ethereal/v1"
 )
 
@@ -120,6 +121,14 @@ func (c *Client) Listen(parent context.Context) error {
 				}
 			} else {
 				return err
+			}
+			continue
+		}
+		if e.E == "" {
+			// Subscription acks are flat: {"ok":true} or {"ok":false,"code":"..."}.
+			var status statusv1.Status
+			if err := c.pbOpts.Unmarshal(data, &status); err == nil && !status.Ok {
+				return errors.New("subscription failed: " + status.Code)
 			}
 			continue
 		}

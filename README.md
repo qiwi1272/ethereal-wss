@@ -72,4 +72,6 @@ Contributions are welcome! Please open issues or pull requests as needed.
 ## Todo
 - Add a `resubscribe` intent helper (Meridian closes connections after 239 minutes).
 - Move to Meridian protos (`meridianv1`, `Dex_DEX_MERIDIAN`) once [roundinternetmoney/protos](https://github.com/roundinternetmoney/protos) publishes them.
+  - Fix field names that don't match the wire and are silently dropped: `OrderFill` (proto uses long names; wire sends `oid`, `px`, `sz`, `m`, ...), `sd` on `OrderUpdate`/`PositionUpdate`, and `OrderUpdate.otyp` (string, not enum).
+  - Add new Meridian fields: `PositionUpdate.pfee`, `OrderUpdate.rr`, `TokenTransfer.toTName`/`toTAddr`.
 - Rename the module path and package from `ethereal` to `meridian`.
