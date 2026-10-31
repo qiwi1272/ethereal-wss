@@ -8,7 +8,7 @@ import (
 	"os/signal"
 	"syscall"
 
-	ws "github.com/roundinternetmoney/ethereal-wss/v2"
+	ws "github.com/qiwi1272/meridian-wss"
 	etherealv1 "roundinternet.money/protos/gen/dex/ethereal/v1"
 )
 

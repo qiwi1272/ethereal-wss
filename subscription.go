@@ -1,4 +1,4 @@
-package ethereal
+package meridian
 
 import (
 	"encoding/json"

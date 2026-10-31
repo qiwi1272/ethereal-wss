@@ -1,4 +1,4 @@
-module github.com/roundinternetmoney/ethereal-wss/v2
+module github.com/qiwi1272/meridian-wss
 
 go 1.25.3
 
