@@ -1,4 +1,4 @@
-module github.com/roundinternetmoney/ethereal-wss/v2
+module github.com/qiwi1272/meridian-wss
 
 go 1.25.3
 
@@ -6,7 +6,7 @@ require (
 	github.com/coder/websocket v1.8.14
 	github.com/nats-io/nats.go v1.49.0
 	google.golang.org/protobuf v1.36.11
-	roundinternet.money/protos v0.1.0
+	github.com/qiwi1272/protos v0.2.0
 )
 
 require (

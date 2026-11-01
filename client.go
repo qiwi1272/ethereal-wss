@@ -1,6 +1,6 @@
-// This package provides a WebSocket client for the Ethereal exchange API.
+// This package provides a WebSocket client for the Meridian (formerly Ethereal) exchange API.
 // It supports real-time streaming of market data and account events using Protocol Buffers.
-package ethereal
+package meridian
 
 import (
 	"context"
@@ -10,17 +10,25 @@ import (
 	"time"
 
 	"github.com/coder/websocket"
+	statusv1 "github.com/qiwi1272/protos/gen/dex/base/status/v1"
+	meridianv1 "github.com/qiwi1272/protos/gen/dex/meridian/v1"
 	"google.golang.org/protobuf/encoding/protojson"
-	etherealv1 "roundinternet.money/protos/gen/dex/ethereal/v1"
 )
 
 type Environment string
 
+// Meridian stream hosts, see https://docs.meridian.xyz/protocol-reference/api-hosts.
 const (
 	// Testnet is the WebSocket URL for the testnet environment.
-	Testnet Environment = "wss://ws2.etherealtest.net/v1/stream"
+	Testnet Environment = "wss://ws.meridiantest.net/v1/stream"
 	// Mainnet is the WebSocket URL for the mainnet environment.
-	Mainnet Environment = "wss://ws2.ethereal.trade/v1/stream"
+	Mainnet Environment = "wss://ws.meridian.xyz/v1/stream"
+
+	// Deprecated: legacy Ethereal stream host. Meridian is a separate
+	// deployment; Ethereal subaccount IDs do not carry over.
+	EtherealTestnet Environment = "wss://ws2.etherealtest.net/v1/stream"
+	// Deprecated: see EtherealTestnet.
+	EtherealMainnet Environment = "wss://ws2.ethereal.trade/v1/stream"
 )
 
 type Client struct {
@@ -28,16 +36,16 @@ type Client struct {
 	conMu *sync.Mutex
 	env   Environment
 
-	streams []etherealv1.EventType
+	streams []meridianv1.EventType
 
-	l2bookCb                func(*etherealv1.L2Book)
-	tickerCb                func(*etherealv1.Ticker)
-	tradefillCb             func(*etherealv1.TradeFill)
-	subaccountLiquidationCb func(*etherealv1.SubaccountLiquidation)
-	positionUpdateCb        func(*etherealv1.PositionUpdate)
-	orderUpdateCb           func(*etherealv1.OrderUpdate)
-	orderFillCb             func(*etherealv1.OrderFill)
-	tokenTransferCb         func(*etherealv1.TokenTransfer)
+	l2bookCb                func(*meridianv1.L2Book)
+	tickerCb                func(*meridianv1.Ticker)
+	tradefillCb             func(*meridianv1.TradeFill)
+	subaccountLiquidationCb func(*meridianv1.SubaccountLiquidation)
+	positionUpdateCb        func(*meridianv1.PositionUpdate)
+	orderUpdateCb           func(*meridianv1.OrderUpdate)
+	orderFillCb             func(*meridianv1.OrderFill)
+	tokenTransferCb         func(*meridianv1.TokenTransfer)
 
 	hbCancel context.CancelCauseFunc
 	pbOpts   *protojson.UnmarshalOptions
@@ -57,7 +65,7 @@ func NewClient(parent context.Context, env Environment) *Client {
 		conMu: &sync.Mutex{},
 		env:   env,
 
-		streams: make([]etherealv1.EventType, 0),
+		streams: make([]meridianv1.EventType, 0),
 
 		pbOpts: &protojson.UnmarshalOptions{DiscardUnknown: true},
 	}
@@ -105,9 +113,9 @@ func (c *Client) Listen(parent context.Context) error {
 			return err
 		}
 
-		var e etherealv1.EventMessage
+		var e meridianv1.EventMessage
 		if err := c.pbOpts.Unmarshal(data, &e); err != nil {
-			if status := new(etherealv1.WebsocketStatus); c.pbOpts.Unmarshal(data, status) == nil {
+			if status := new(meridianv1.WebsocketStatus); c.pbOpts.Unmarshal(data, status) == nil {
 				if !status.Status.Ok {
 					return errors.New(status.String())
 				}
@@ -116,13 +124,21 @@ func (c *Client) Listen(parent context.Context) error {
 			}
 			continue
 		}
+		if e.E == "" {
+			// Subscription acks are flat: {"ok":true} or {"ok":false,"code":"..."}.
+			var status statusv1.Status
+			if err := c.pbOpts.Unmarshal(data, &status); err == nil && !status.Ok {
+				return errors.New("subscription failed: " + status.Code)
+			}
+			continue
+		}
 
-		event := etherealv1.EventType_json_value[e.E]
+		event := meridianv1.EventType_json_value[e.E]
 
 		switch event {
 		case EventTypeL2Book:
 			if c.l2bookCb != nil {
-				var msg etherealv1.L2Book
+				var msg meridianv1.L2Book
 				if err := c.pbOpts.Unmarshal(data, &msg); err != nil {
 					cancel(err)
 					return err
@@ -131,7 +147,7 @@ func (c *Client) Listen(parent context.Context) error {
 			}
 		case EventTypeTicker:
 			if c.tickerCb != nil {
-				var msg etherealv1.Ticker
+				var msg meridianv1.Ticker
 				if err := c.pbOpts.Unmarshal(data, &msg); err != nil {
 					cancel(err)
 					return err
@@ -140,7 +156,7 @@ func (c *Client) Listen(parent context.Context) error {
 			}
 		case EventTypeTradeFill:
 			if c.tradefillCb != nil {
-				var msg etherealv1.TradeFill
+				var msg meridianv1.TradeFill
 				if err := c.pbOpts.Unmarshal(data, &msg); err != nil {
 					cancel(err)
 					return err
@@ -149,7 +165,7 @@ func (c *Client) Listen(parent context.Context) error {
 			}
 		case EventTypeSubaccountLiquidation:
 			if c.subaccountLiquidationCb != nil {
-				var msg etherealv1.SubaccountLiquidation
+				var msg meridianv1.SubaccountLiquidation
 				if err := c.pbOpts.Unmarshal(data, &msg); err != nil {
 					cancel(err)
 					return err
@@ -158,7 +174,7 @@ func (c *Client) Listen(parent context.Context) error {
 			}
 		case EventTypePositionUpdate:
 			if c.positionUpdateCb != nil {
-				var msg etherealv1.PositionUpdate
+				var msg meridianv1.PositionUpdate
 				if err := c.pbOpts.Unmarshal(data, &msg); err != nil {
 					cancel(err)
 					return err
@@ -167,7 +183,7 @@ func (c *Client) Listen(parent context.Context) error {
 			}
 		case EventTypeOrderUpdate:
 			if c.orderUpdateCb != nil {
-				var msg etherealv1.OrderUpdate
+				var msg meridianv1.OrderUpdate
 				if err := c.pbOpts.Unmarshal(data, &msg); err != nil {
 					cancel(err)
 					return err
@@ -176,7 +192,7 @@ func (c *Client) Listen(parent context.Context) error {
 			}
 		case EventTypeOrderFill:
 			if c.orderFillCb != nil {
-				var msg etherealv1.OrderFill
+				var msg meridianv1.OrderFill
 				if err := c.pbOpts.Unmarshal(data, &msg); err != nil {
 					cancel(err)
 					return err
@@ -185,7 +201,7 @@ func (c *Client) Listen(parent context.Context) error {
 			}
 		case EventTypeTokenTransfer:
 			if c.tokenTransferCb != nil {
-				var msg etherealv1.TokenTransfer
+				var msg meridianv1.TokenTransfer
 				if err := c.pbOpts.Unmarshal(data, &msg); err != nil {
 					cancel(err)
 					return err
@@ -196,35 +212,35 @@ func (c *Client) Listen(parent context.Context) error {
 	}
 }
 
-func (c *Client) OnL2Book(cb func(*etherealv1.L2Book)) {
+func (c *Client) OnL2Book(cb func(*meridianv1.L2Book)) {
 	c.l2bookCb = cb
 }
 
-func (c *Client) OnTicker(cb func(*etherealv1.Ticker)) {
+func (c *Client) OnTicker(cb func(*meridianv1.Ticker)) {
 	c.tickerCb = cb
 }
 
-func (c *Client) OnTradeFill(cb func(*etherealv1.TradeFill)) {
+func (c *Client) OnTradeFill(cb func(*meridianv1.TradeFill)) {
 	c.tradefillCb = cb
 }
 
-func (c *Client) OnSubaccountLiquidation(cb func(*etherealv1.SubaccountLiquidation)) {
+func (c *Client) OnSubaccountLiquidation(cb func(*meridianv1.SubaccountLiquidation)) {
 	c.subaccountLiquidationCb = cb
 }
 
-func (c *Client) OnPositionUpdate(cb func(*etherealv1.PositionUpdate)) {
+func (c *Client) OnPositionUpdate(cb func(*meridianv1.PositionUpdate)) {
 	c.positionUpdateCb = cb
 }
 
-func (c *Client) OnOrderUpdate(cb func(*etherealv1.OrderUpdate)) {
+func (c *Client) OnOrderUpdate(cb func(*meridianv1.OrderUpdate)) {
 	c.orderUpdateCb = cb
 }
 
-func (c *Client) OnOrderFill(cb func(*etherealv1.OrderFill)) {
+func (c *Client) OnOrderFill(cb func(*meridianv1.OrderFill)) {
 	c.orderFillCb = cb
 }
 
-func (c *Client) OnTokenTransfer(cb func(*etherealv1.TokenTransfer)) {
+func (c *Client) OnTokenTransfer(cb func(*meridianv1.TokenTransfer)) {
 	c.tokenTransferCb = cb
 }
 

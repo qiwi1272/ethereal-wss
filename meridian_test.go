@@ -1,4 +1,4 @@
-package ethereal
+package meridian
 
 import "testing"
 
@@ -26,10 +26,10 @@ func TestMarshalEventData(t *testing.T) {
 }
 
 func TestEnvironment(t *testing.T) {
-	if string(Testnet) != "wss://ws2.etherealtest.net/v1/stream" {
+	if string(Testnet) != "wss://ws.meridiantest.net/v1/stream" {
 		t.Errorf("Testnet URL incorrect")
 	}
-	if string(Mainnet) != "wss://ws2.ethereal.trade/v1/stream" {
+	if string(Mainnet) != "wss://ws.meridian.xyz/v1/stream" {
 		t.Errorf("Mainnet URL incorrect")
 	}
 }

@@ -1,4 +1,4 @@
-package ethereal
+package meridian
 
 import (
 	"encoding/json"
@@ -6,9 +6,9 @@ import (
 	"reflect"
 	"testing"
 
+	meridianv1 "github.com/qiwi1272/protos/gen/dex/meridian/v1"
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/proto"
-	etherealv1 "roundinternet.money/protos/gen/dex/ethereal/v1"
 )
 
 func TestIntent_MarshalEventData(t *testing.T) {
@@ -28,43 +28,43 @@ func TestIntent_MarshalEventData(t *testing.T) {
 	}{
 		{
 			name: "subscribe_L2Book_symbol", intent: Sub, event: EventTypeL2Book, to: sym,
-			wantEvent: "subscribe", wantType: etherealv1.EventType_json_name[EventTypeL2Book], wantSym: sym,
+			wantEvent: "subscribe", wantType: meridianv1.EventType_json_name[EventTypeL2Book], wantSym: sym,
 		},
 		{
 			name: "subscribe_Ticker_symbol", intent: Sub, event: EventTypeTicker, to: sym,
-			wantEvent: "subscribe", wantType: etherealv1.EventType_json_name[EventTypeTicker], wantSym: sym,
+			wantEvent: "subscribe", wantType: meridianv1.EventType_json_name[EventTypeTicker], wantSym: sym,
 		},
 		{
 			name: "subscribe_TradeFill_symbol", intent: Sub, event: EventTypeTradeFill, to: sym,
-			wantEvent: "subscribe", wantType: etherealv1.EventType_json_name[EventTypeTradeFill], wantSym: sym,
+			wantEvent: "subscribe", wantType: meridianv1.EventType_json_name[EventTypeTradeFill], wantSym: sym,
 		},
 		{
 			name: "subscribe_SubaccountLiquidation_subaccount", intent: Sub, event: EventTypeSubaccountLiquidation, to: subAcct,
-			wantEvent: "subscribe", wantType: etherealv1.EventType_json_name[EventTypeSubaccountLiquidation], wantSub: subAcct,
+			wantEvent: "subscribe", wantType: meridianv1.EventType_json_name[EventTypeSubaccountLiquidation], wantSub: subAcct,
 		},
 		{
 			name: "subscribe_PositionUpdate_subaccount", intent: Sub, event: EventTypePositionUpdate, to: subAcct,
-			wantEvent: "subscribe", wantType: etherealv1.EventType_json_name[EventTypePositionUpdate], wantSub: subAcct,
+			wantEvent: "subscribe", wantType: meridianv1.EventType_json_name[EventTypePositionUpdate], wantSub: subAcct,
 		},
 		{
 			name: "subscribe_OrderUpdate_subaccount", intent: Sub, event: EventTypeOrderUpdate, to: subAcct,
-			wantEvent: "subscribe", wantType: etherealv1.EventType_json_name[EventTypeOrderUpdate], wantSub: subAcct,
+			wantEvent: "subscribe", wantType: meridianv1.EventType_json_name[EventTypeOrderUpdate], wantSub: subAcct,
 		},
 		{
 			name: "subscribe_OrderFill_subaccount", intent: Sub, event: EventTypeOrderFill, to: subAcct,
-			wantEvent: "subscribe", wantType: etherealv1.EventType_json_name[EventTypeOrderFill], wantSub: subAcct,
+			wantEvent: "subscribe", wantType: meridianv1.EventType_json_name[EventTypeOrderFill], wantSub: subAcct,
 		},
 		{
 			name: "subscribe_TokenTransfer_subaccount", intent: Sub, event: EventTypeTokenTransfer, to: subAcct,
-			wantEvent: "subscribe", wantType: etherealv1.EventType_json_name[EventTypeTokenTransfer], wantSub: subAcct,
+			wantEvent: "subscribe", wantType: meridianv1.EventType_json_name[EventTypeTokenTransfer], wantSub: subAcct,
 		},
 		{
 			name: "unsubscribe_L2Book_symbol", intent: Unsub, event: EventTypeL2Book, to: sym,
-			wantEvent: "unsubscribe", wantType: etherealv1.EventType_json_name[EventTypeL2Book], wantSym: sym,
+			wantEvent: "unsubscribe", wantType: meridianv1.EventType_json_name[EventTypeL2Book], wantSym: sym,
 		},
 		{
 			name: "unknown_event", intent: Sub,
-			event:   etherealv1.EventType_EVENT_TYPE_EVENT_UNSPECIFIED,
+			event:   meridianv1.EventType_EVENT_TYPE_EVENT_UNSPECIFIED,
 			to:      sym,
 			wantErr: ErrUnknownEvent,
 		},
@@ -147,105 +147,105 @@ func TestUnmarshalEvent(t *testing.T) {
 		wantAnyErr bool
 	}{
 		{
-			name: "L2Book",
+			name:  "L2Book",
 			event: EventTypeL2Book,
-			data: mustJSON(&etherealv1.L2Book{
-				E: etherealv1.EventType_json_name[EventTypeL2Book],
+			data: mustJSON(&meridianv1.L2Book{
+				E: meridianv1.EventType_json_name[EventTypeL2Book],
 				T: 1,
-				Data: &etherealv1.L2Book_Data{
+				Data: &meridianv1.L2Book_Data{
 					S: "s",
 					T: 1,
 				},
 			}),
-			want: &etherealv1.L2Book{},
+			want: &meridianv1.L2Book{},
 		},
 		{
-			name: "Ticker",
+			name:  "Ticker",
 			event: EventTypeTicker,
-			data: mustJSON(&etherealv1.Ticker{
-				E: etherealv1.EventType_json_name[EventTypeTicker],
+			data: mustJSON(&meridianv1.Ticker{
+				E: meridianv1.EventType_json_name[EventTypeTicker],
 				T: 1,
-				Data: &etherealv1.Ticker_Data{
+				Data: &meridianv1.Ticker_Data{
 					S: "s",
 					T: 1,
 				},
 			}),
-			want: &etherealv1.Ticker{},
+			want: &meridianv1.Ticker{},
 		},
 		{
-			name: "TradeFill",
+			name:  "TradeFill",
 			event: EventTypeTradeFill,
-			data: mustJSON(&etherealv1.TradeFill{
-				E: etherealv1.EventType_json_name[EventTypeTradeFill],
+			data: mustJSON(&meridianv1.TradeFill{
+				E: meridianv1.EventType_json_name[EventTypeTradeFill],
 				T: 1,
-				Data: &etherealv1.TradeFill_Data{
+				Data: &meridianv1.TradeFill_Data{
 					S: "s",
 					T: 1,
 				},
 			}),
-			want: &etherealv1.TradeFill{},
+			want: &meridianv1.TradeFill{},
 		},
 		{
-			name: "SubaccountLiquidation",
+			name:  "SubaccountLiquidation",
 			event: EventTypeSubaccountLiquidation,
-			data: mustJSON(&etherealv1.SubaccountLiquidation{
-				E: etherealv1.EventType_json_name[EventTypeSubaccountLiquidation],
+			data: mustJSON(&meridianv1.SubaccountLiquidation{
+				E: meridianv1.EventType_json_name[EventTypeSubaccountLiquidation],
 				T: 1,
-				Data: &etherealv1.SubaccountLiquidation_Data{
+				Data: &meridianv1.SubaccountLiquidation_Data{
 					Sid: "sid",
 					T:   1,
 				},
 			}),
-			want: &etherealv1.SubaccountLiquidation{},
+			want: &meridianv1.SubaccountLiquidation{},
 		},
 		{
-			name: "PositionUpdate",
+			name:  "PositionUpdate",
 			event: EventTypePositionUpdate,
-			data: mustJSON(&etherealv1.PositionUpdate{
-				E: etherealv1.EventType_json_name[EventTypePositionUpdate],
+			data: mustJSON(&meridianv1.PositionUpdate{
+				E: meridianv1.EventType_json_name[EventTypePositionUpdate],
 				T: 1,
-				Data: &etherealv1.PositionUpdate_Data{
+				Data: &meridianv1.PositionUpdate_Data{
 					T: 1,
 				},
 			}),
-			want: &etherealv1.PositionUpdate{},
+			want: &meridianv1.PositionUpdate{},
 		},
 		{
-			name: "OrderUpdate",
+			name:  "OrderUpdate",
 			event: EventTypeOrderUpdate,
-			data: mustJSON(&etherealv1.OrderUpdate{
-				E: etherealv1.EventType_json_name[EventTypeOrderUpdate],
+			data: mustJSON(&meridianv1.OrderUpdate{
+				E: meridianv1.EventType_json_name[EventTypeOrderUpdate],
 				T: 1,
-				Data: &etherealv1.OrderUpdate_Data{
+				Data: &meridianv1.OrderUpdate_Data{
 					T: 1,
 				},
 			}),
-			want: &etherealv1.OrderUpdate{},
+			want: &meridianv1.OrderUpdate{},
 		},
 		{
-			name: "OrderFill",
+			name:  "OrderFill",
 			event: EventTypeOrderFill,
-			data: mustJSON(&etherealv1.OrderFill{
-				E: etherealv1.EventType_json_name[EventTypeOrderFill],
+			data: mustJSON(&meridianv1.OrderFill{
+				E: meridianv1.EventType_json_name[EventTypeOrderFill],
 				T: 1,
-				Data: &etherealv1.OrderFill_Data{
+				Data: &meridianv1.OrderFill_Data{
 					T: 1,
 				},
 			}),
-			want: &etherealv1.OrderFill{},
+			want: &meridianv1.OrderFill{},
 		},
 		{
-			name: "TokenTransfer",
+			name:  "TokenTransfer",
 			event: EventTypeTokenTransfer,
-			data: mustJSON(&etherealv1.TokenTransfer{
-				E: etherealv1.EventType_json_name[EventTypeTokenTransfer],
+			data: mustJSON(&meridianv1.TokenTransfer{
+				E: meridianv1.EventType_json_name[EventTypeTokenTransfer],
 				T: 1,
-				Data: &etherealv1.TokenTransfer_Data{
+				Data: &meridianv1.TokenTransfer_Data{
 					Id:  "id",
 					Sid: "sid",
 				},
 			}),
-			want: &etherealv1.TokenTransfer{},
+			want: &meridianv1.TokenTransfer{},
 		},
 		{
 			name:       "bad_json",
@@ -261,7 +261,7 @@ func TestUnmarshalEvent(t *testing.T) {
 		},
 		{
 			name:    "unspecified_enum",
-			event:   etherealv1.EventType_EVENT_TYPE_EVENT_UNSPECIFIED,
+			event:   meridianv1.EventType_EVENT_TYPE_EVENT_UNSPECIFIED,
 			data:    []byte(`{}`),
 			wantErr: ErrUnknownEvent,
 		},
