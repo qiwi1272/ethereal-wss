@@ -2,7 +2,7 @@
 
 [![Go Reference](https://pkg.go.dev/badge/github.com/qiwi1272/meridian-wss.svg)](https://pkg.go.dev/github.com/qiwi1272/meridian-wss)
 [![CI](https://github.com/qiwi1272/meridian-wss/actions/workflows/ci.yml/badge.svg)](https://github.com/qiwi1272/meridian-wss/actions/workflows/ci.yml)
-[![Release](https://github.com/qiwi1272/meridian-wss/actions/workflows/release.yml/badge.svg)](https://github.com/qiwi1272/meridian-wss/actions/workflows/release.yml)
+[![Release](https://github.com/qiwi1272/meridian-wss/actions/workflows/release.yaml/badge.svg)](https://github.com/qiwi1272/meridian-wss/actions/workflows/release.yaml)
 
 
 A proto-based websocket client for the [Meridian](https://meridian.xyz) exchange (formerly Ethereal).
