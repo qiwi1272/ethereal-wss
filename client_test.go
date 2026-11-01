@@ -13,9 +13,9 @@ import (
 	"time"
 
 	"github.com/coder/websocket"
+	meridianv1 "github.com/qiwi1272/protos/gen/dex/meridian/v1"
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/proto"
-	etherealv1 "roundinternet.money/protos/gen/dex/ethereal/v1"
 )
 
 func newTestClient(conn *websocket.Conn) *Client {
@@ -161,17 +161,17 @@ func TestListen_DispatchEachEventType(t *testing.T) {
 	}{
 		{
 			name: "L2Book",
-			send: &etherealv1.L2Book{
-				E: etherealv1.EventType_json_name[EventTypeL2Book],
+			send: &meridianv1.L2Book{
+				E: meridianv1.EventType_json_name[EventTypeL2Book],
 				T: 42,
-				Data: &etherealv1.L2Book_Data{
+				Data: &meridianv1.L2Book_Data{
 					S: "sym",
 					T: 1,
 				},
 			},
 			reg: func(c *Client, n *atomic.Int32) {
-				c.OnL2Book(func(b *etherealv1.L2Book) {
-					if b.GetE() == etherealv1.EventType_json_name[EventTypeL2Book] && b.GetData().GetS() == "sym" {
+				c.OnL2Book(func(b *meridianv1.L2Book) {
+					if b.GetE() == meridianv1.EventType_json_name[EventTypeL2Book] && b.GetData().GetS() == "sym" {
 						n.Add(1)
 					}
 				})
@@ -179,16 +179,16 @@ func TestListen_DispatchEachEventType(t *testing.T) {
 		},
 		{
 			name: "Ticker",
-			send: &etherealv1.Ticker{
-				E: etherealv1.EventType_json_name[EventTypeTicker],
+			send: &meridianv1.Ticker{
+				E: meridianv1.EventType_json_name[EventTypeTicker],
 				T: 1,
-				Data: &etherealv1.Ticker_Data{
+				Data: &meridianv1.Ticker_Data{
 					S: "sym",
 					T: 1,
 				},
 			},
 			reg: func(c *Client, n *atomic.Int32) {
-				c.OnTicker(func(x *etherealv1.Ticker) {
+				c.OnTicker(func(x *meridianv1.Ticker) {
 					if x.GetData().GetS() == "sym" {
 						n.Add(1)
 					}
@@ -197,16 +197,16 @@ func TestListen_DispatchEachEventType(t *testing.T) {
 		},
 		{
 			name: "TradeFill",
-			send: &etherealv1.TradeFill{
-				E: etherealv1.EventType_json_name[EventTypeTradeFill],
+			send: &meridianv1.TradeFill{
+				E: meridianv1.EventType_json_name[EventTypeTradeFill],
 				T: 1,
-				Data: &etherealv1.TradeFill_Data{
+				Data: &meridianv1.TradeFill_Data{
 					S: "sym",
 					T: 1,
 				},
 			},
 			reg: func(c *Client, n *atomic.Int32) {
-				c.OnTradeFill(func(x *etherealv1.TradeFill) {
+				c.OnTradeFill(func(x *meridianv1.TradeFill) {
 					if x.GetData().GetS() == "sym" {
 						n.Add(1)
 					}
@@ -215,16 +215,16 @@ func TestListen_DispatchEachEventType(t *testing.T) {
 		},
 		{
 			name: "SubaccountLiquidation",
-			send: &etherealv1.SubaccountLiquidation{
-				E: etherealv1.EventType_json_name[EventTypeSubaccountLiquidation],
+			send: &meridianv1.SubaccountLiquidation{
+				E: meridianv1.EventType_json_name[EventTypeSubaccountLiquidation],
 				T: 1,
-				Data: &etherealv1.SubaccountLiquidation_Data{
+				Data: &meridianv1.SubaccountLiquidation_Data{
 					Sid: "sid",
 					T:   1,
 				},
 			},
 			reg: func(c *Client, n *atomic.Int32) {
-				c.OnSubaccountLiquidation(func(x *etherealv1.SubaccountLiquidation) {
+				c.OnSubaccountLiquidation(func(x *meridianv1.SubaccountLiquidation) {
 					if x.GetData().GetSid() == "sid" {
 						n.Add(1)
 					}
@@ -233,61 +233,61 @@ func TestListen_DispatchEachEventType(t *testing.T) {
 		},
 		{
 			name: "PositionUpdate",
-			send: &etherealv1.PositionUpdate{
-				E: etherealv1.EventType_json_name[EventTypePositionUpdate],
+			send: &meridianv1.PositionUpdate{
+				E: meridianv1.EventType_json_name[EventTypePositionUpdate],
 				T: 1,
-				Data: &etherealv1.PositionUpdate_Data{
+				Data: &meridianv1.PositionUpdate_Data{
 					T: 1,
 				},
 			},
 			reg: func(c *Client, n *atomic.Int32) {
-				c.OnPositionUpdate(func(x *etherealv1.PositionUpdate) {
+				c.OnPositionUpdate(func(x *meridianv1.PositionUpdate) {
 					n.Add(1)
 				})
 			},
 		},
 		{
 			name: "OrderUpdate",
-			send: &etherealv1.OrderUpdate{
-				E: etherealv1.EventType_json_name[EventTypeOrderUpdate],
+			send: &meridianv1.OrderUpdate{
+				E: meridianv1.EventType_json_name[EventTypeOrderUpdate],
 				T: 1,
-				Data: &etherealv1.OrderUpdate_Data{
+				Data: &meridianv1.OrderUpdate_Data{
 					T: 1,
 				},
 			},
 			reg: func(c *Client, n *atomic.Int32) {
-				c.OnOrderUpdate(func(x *etherealv1.OrderUpdate) {
+				c.OnOrderUpdate(func(x *meridianv1.OrderUpdate) {
 					n.Add(1)
 				})
 			},
 		},
 		{
 			name: "OrderFill",
-			send: &etherealv1.OrderFill{
-				E: etherealv1.EventType_json_name[EventTypeOrderFill],
+			send: &meridianv1.OrderFill{
+				E: meridianv1.EventType_json_name[EventTypeOrderFill],
 				T: 1,
-				Data: &etherealv1.OrderFill_Data{
+				Data: &meridianv1.OrderFill_Data{
 					T: 1,
 				},
 			},
 			reg: func(c *Client, n *atomic.Int32) {
-				c.OnOrderFill(func(x *etherealv1.OrderFill) {
+				c.OnOrderFill(func(x *meridianv1.OrderFill) {
 					n.Add(1)
 				})
 			},
 		},
 		{
 			name: "TokenTransfer",
-			send: &etherealv1.TokenTransfer{
-				E: etherealv1.EventType_json_name[EventTypeTokenTransfer],
+			send: &meridianv1.TokenTransfer{
+				E: meridianv1.EventType_json_name[EventTypeTokenTransfer],
 				T: 1,
-				Data: &etherealv1.TokenTransfer_Data{
+				Data: &meridianv1.TokenTransfer_Data{
 					Id:  "id1",
 					Sid: "sid",
 				},
 			},
 			reg: func(c *Client, n *atomic.Int32) {
-				c.OnTokenTransfer(func(x *etherealv1.TokenTransfer) {
+				c.OnTokenTransfer(func(x *meridianv1.TokenTransfer) {
 					if x.GetData().GetId() == "id1" {
 						n.Add(1)
 					}
@@ -333,10 +333,10 @@ func TestListen_NilCallback_NoPanic(t *testing.T) {
 	c := newTestClient(clientConn)
 	// no OnL2Book registered
 
-	payload := mustProtoJSON(t, &etherealv1.L2Book{
-		E: etherealv1.EventType_json_name[EventTypeL2Book],
+	payload := mustProtoJSON(t, &meridianv1.L2Book{
+		E: meridianv1.EventType_json_name[EventTypeL2Book],
 		T: 1,
-		Data: &etherealv1.L2Book_Data{
+		Data: &meridianv1.L2Book_Data{
 			S: "s",
 			T: 1,
 		},
@@ -421,12 +421,12 @@ func TestListen_SubscribeAck_okTrue_Continues(t *testing.T) {
 
 	c := newTestClient(clientConn)
 	var hits atomic.Int32
-	c.OnL2Book(func(b *etherealv1.L2Book) { hits.Add(1) })
+	c.OnL2Book(func(b *meridianv1.L2Book) { hits.Add(1) })
 
-	l2 := mustProtoJSON(t, &etherealv1.L2Book{
-		E:    etherealv1.EventType_json_name[EventTypeL2Book],
+	l2 := mustProtoJSON(t, &meridianv1.L2Book{
+		E:    meridianv1.EventType_json_name[EventTypeL2Book],
 		T:    1,
-		Data: &etherealv1.L2Book_Data{S: "x", T: 1},
+		Data: &meridianv1.L2Book_Data{S: "x", T: 1},
 	})
 
 	ctx, cancel := context.WithCancel(context.Background())
@@ -452,14 +452,14 @@ func TestListen_WebsocketStatus_okTrue_Continues(t *testing.T) {
 
 	c := newTestClient(clientConn)
 	var hits atomic.Int32
-	c.OnL2Book(func(b *etherealv1.L2Book) { hits.Add(1) })
+	c.OnL2Book(func(b *meridianv1.L2Book) { hits.Add(1) })
 
 	// EventMessage fails; WebsocketStatus ok true -> continue; then valid L2Book.
 	statusThenBook := []byte(`{"e":1,"status":{"ok":true}}`)
-	l2 := mustProtoJSON(t, &etherealv1.L2Book{
-		E: etherealv1.EventType_json_name[EventTypeL2Book],
-		T: 1,
-		Data: &etherealv1.L2Book_Data{S: "x", T: 1},
+	l2 := mustProtoJSON(t, &meridianv1.L2Book{
+		E:    meridianv1.EventType_json_name[EventTypeL2Book],
+		T:    1,
+		Data: &meridianv1.L2Book_Data{S: "x", T: 1},
 	})
 
 	ctx, cancel := context.WithCancel(context.Background())
@@ -503,7 +503,7 @@ func TestListen_PayloadUnmarshalError_Returns(t *testing.T) {
 	defer cleanup()
 
 	c := newTestClient(clientConn)
-	c.OnL2Book(func(*etherealv1.L2Book) { t.Error("should not invoke callback on bad payload") })
+	c.OnL2Book(func(*meridianv1.L2Book) { t.Error("should not invoke callback on bad payload") })
 
 	// Valid EventMessage discriminator but invalid L2Book (t must be int).
 	payload := []byte(`{"e":"L2Book","t":"nope"}`)
@@ -527,12 +527,12 @@ func TestListen_DiscardUnknown_ExtraKeys(t *testing.T) {
 
 	var hits atomic.Int32
 	c := newTestClient(clientConn)
-	c.OnL2Book(func(*etherealv1.L2Book) { hits.Add(1) })
+	c.OnL2Book(func(*meridianv1.L2Book) { hits.Add(1) })
 
-	raw := string(mustProtoJSON(t, &etherealv1.L2Book{
-		E: etherealv1.EventType_json_name[EventTypeL2Book],
+	raw := string(mustProtoJSON(t, &meridianv1.L2Book{
+		E: meridianv1.EventType_json_name[EventTypeL2Book],
 		T: 1,
-		Data: &etherealv1.L2Book_Data{
+		Data: &meridianv1.L2Book_Data{
 			S: "s",
 			T: 1,
 		},
@@ -593,7 +593,7 @@ func TestListen_UnhandledEventString_ContinuesUntilCancel(t *testing.T) {
 
 	c := newTestClient(clientConn)
 	var hits atomic.Int32
-	c.OnL2Book(func(*etherealv1.L2Book) { hits.Add(1) })
+	c.OnL2Book(func(*meridianv1.L2Book) { hits.Add(1) })
 
 	// Valid JSON for EventMessage with unknown e — not in EventType_json_value as a key? "bogus" missing -> map lookup 0, no switch arm.
 	payload := []byte(`{"e":"bogus"}`)

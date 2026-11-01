@@ -9,7 +9,7 @@ import (
 	"syscall"
 
 	ws "github.com/qiwi1272/meridian-wss"
-	etherealv1 "roundinternet.money/protos/gen/dex/ethereal/v1"
+	meridianv1 "github.com/qiwi1272/protos/gen/dex/meridian/v1"
 )
 
 const bitcoinSymbol = "BTCUSD"
@@ -22,13 +22,13 @@ func main() {
 	defer client.Close()
 
 	// Set typed callbacks for each event type
-	client.OnL2Book(func(msg *etherealv1.L2Book) {
+	client.OnL2Book(func(msg *meridianv1.L2Book) {
 		fmt.Printf("[L2Book] %v\n", msg)
 	})
-	client.OnTicker(func(msg *etherealv1.Ticker) {
+	client.OnTicker(func(msg *meridianv1.Ticker) {
 		fmt.Printf("[Ticker] %v\n", msg)
 	})
-	client.OnTradeFill(func(msg *etherealv1.TradeFill) {
+	client.OnTradeFill(func(msg *meridianv1.TradeFill) {
 		fmt.Printf("[TradeFill] %v\n", msg)
 	})
 

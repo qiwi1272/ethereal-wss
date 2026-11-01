@@ -6,7 +6,7 @@ import (
 	"log"
 
 	"github.com/nats-io/nats.go"
-	basev1 "roundinternet.money/protos/gen/dex/base/v1"
+	basev1 "github.com/qiwi1272/protos/gen/dex/base/v1"
 )
 
 func main() {
