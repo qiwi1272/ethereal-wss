@@ -1,8 +1,9 @@
 # Golang Websocket Client for Meridian API
 
 [![Go Reference](https://pkg.go.dev/badge/github.com/qiwi1272/meridian-wss.svg)](https://pkg.go.dev/github.com/qiwi1272/meridian-wss)
-[![Go Report Card](https://goreportcard.com/badge/github.com/qiwi1272/meridian-wss)](https://goreportcard.com/report/github.com/qiwi1272/meridian-wss)
 [![CI](https://github.com/qiwi1272/meridian-wss/actions/workflows/ci.yml/badge.svg)](https://github.com/qiwi1272/meridian-wss/actions/workflows/ci.yml)
+[![Release](https://github.com/qiwi1272/meridian-wss/actions/workflows/release.yml/badge.svg)](https://github.com/qiwi1272/meridian-wss/actions/workflows/release.yml)
+
 
 A proto-based websocket client for the [Meridian](https://meridian.xyz) exchange (formerly Ethereal).
 

@@ -20,5 +20,3 @@ golang.org/x/sys v0.39.0 h1:CvCKL8MeisomCi6qNZ+wbb0DN9E5AATixKsvNtMoMFk=
 golang.org/x/sys v0.39.0/go.mod h1:OgkHotnGiDImocRcuBABYBEXf8A9a87e/uXjp9XT3ks=
 google.golang.org/protobuf v1.36.11 h1:fV6ZwhNocDyBLK0dj+fg8ektcVegBBuEolpbTQyBNVE=
 google.golang.org/protobuf v1.36.11/go.mod h1:HTf+CrKn2C3g5S8VImy6tdcUvCska2kB7j23XfzDpco=
-roundinternet.money/protos v0.1.0 h1:LNgoryti4lcs4Dm6cied3CnA/GSjiQLUxQIySnH3Akc=
-roundinternet.money/protos v0.1.0/go.mod h1:1ix9ND/fhFh4DoFSjMlnO6FF/eMK0w42DWUC5nXDJmQ=
